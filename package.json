@@ -1,0 +1,16 @@
+{
+  "name": "create-native-base-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Aditya Jamuar",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.15.2",
+    "fs-extra": "^10.0.0"
+  },
+  "scripts": {
+    "run-converter": "node ./scripts/run-converter",
+    "get-screen-data": "node ./scripts/get-screen-data",
+    "create-screen-dir": "node ./scripts/create-screen-dir"
+  }
+}
