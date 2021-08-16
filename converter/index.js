@@ -5,18 +5,14 @@ const processScreen = require("./processScreen");
 const processModule = require("./processModule");
 const { createScreenDir } = require("./createScreenDir");
 
-// TODO: Fix the directory
-const tempFolderPath = path.resolve(
-  "/Users/adityajamuar/Sites/projects/nativebase/storybooks/converter-code/temp"
-);
+const tempFolderPath = path.resolve("./temp");
 console.log(tempFolderPath);
 
-// TODO: Fix the directory
-const fileFolderPath =
-  "/Users/adityajamuar/Sites/projects/nativebase/nativebase-pro/storybook/storybook/stories";
+const fileFolderPath = "./nativebase-pro/storybook/storybook/stories";
 console.log(fileFolderPath);
 
 const modulesPath = fileFolderPath + "/modules";
+console.log("%c&*&: yo", "color: #10b981;", modulesPath);
 
 const moduleDirContents = fs.readdirSync(modulesPath);
 // console.log(moduleDirContents, "moduleDirContents &*&*");
@@ -35,8 +31,10 @@ let storybookScreens = {
 };
 
 function getStoryBookScreensCode() {
+  console.log("%c&*&: gu", "color: #10b981;");
   moduleNames.forEach((moduleName, index) => {
     const modulePath = modulesPath + "/" + moduleName;
+    console.log("%c &*& modulePath", "color: #10b981;", modulePath);
     let moduleScreenMap = processModule(modulePath);
 
     for (let key of Object.keys(moduleScreenMap)) {
@@ -93,6 +91,10 @@ function getStoryBookScreensCode() {
 // console.log(storybookScreens, "storybookScreens &*&*");
 
 function writeCodeToFiles() {
+  if (!fs.existsSync(tempFolderPath + "/output")) {
+    fs.mkdirSync(tempFolderPath + "/output");
+  }
+
   fs.writeFileSync(
     tempFolderPath + "/output/screens.json",
     JSON.stringify(storybookScreens.screens, null, 2)
