@@ -5,24 +5,6 @@ const processScreen = require("./processScreen");
 const processModule = require("./processModule");
 const { createScreenDir } = require("./createScreenDir");
 
-const tempFolderPath = path.resolve("./temp");
-console.log(tempFolderPath);
-
-const fileFolderPath = "./nativebase-pro/storybook/storybook/stories";
-console.log(fileFolderPath);
-
-const modulesPath = fileFolderPath + "/modules";
-console.log("%c&*&: yo", "color: #10b981;", modulesPath);
-
-const moduleDirContents = fs.readdirSync(modulesPath);
-// console.log(moduleDirContents, "moduleDirContents &*&*");
-
-const moduleNames = moduleDirContents.filter((fileName) => {
-  const stat = fs.statSync(modulesPath + "/" + fileName);
-
-  return stat.isDirectory();
-});
-
 const screenPathMap = {};
 let storybookScreens = {
   screens: [],
@@ -31,10 +13,22 @@ let storybookScreens = {
 };
 
 function getStoryBookScreensCode() {
-  console.log("%c&*&: gu", "color: #10b981;");
+  const fileFolderPath =
+    process.cwd() + "/nativebase-starter-kit/storybook/storybook/stories";
+
+  const modulesPath = fileFolderPath + "/modules";
+
+  const moduleDirContents = fs.readdirSync(modulesPath);
+  // console.log(moduleDirContents, "moduleDirContents &*&*");
+
+  const moduleNames = moduleDirContents.filter((fileName) => {
+    const stat = fs.statSync(modulesPath + "/" + fileName);
+
+    return stat.isDirectory();
+  });
+
   moduleNames.forEach((moduleName, index) => {
     const modulePath = modulesPath + "/" + moduleName;
-    console.log("%c &*& modulePath", "color: #10b981;", modulePath);
     let moduleScreenMap = processModule(modulePath);
 
     for (let key of Object.keys(moduleScreenMap)) {
@@ -76,21 +70,9 @@ function getStoryBookScreensCode() {
   return storybookScreens;
 }
 
-// console.log(
-//   JSON.stringify(
-//     [...storybookScreens.screens, ...storybookScreens.components].map((s) => ({
-//       name: s.name,
-//       deps: s.dependencies,
-//     })),
-//     null,
-//     2
-//   ),
-//   "storybookScreens &*&*"
-// );
-
-// console.log(storybookScreens, "storybookScreens &*&*");
-
 function writeCodeToFiles() {
+  const tempFolderPath = path.resolve("./temp");
+
   if (!fs.existsSync(tempFolderPath + "/output")) {
     fs.mkdirSync(tempFolderPath + "/output");
   }

@@ -1,10 +1,15 @@
 const fs = require("fs-extra");
+const { createMainFile } = require("./createMainFile");
 
 function createScreenDir(screenJSON) {
-  const screenDirPath = "./screens";
+  createMainFile(screenJSON.screens);
+  let screenDirPath = "./screens";
 
-  if (fs.existsSync(screenDirPath)) {
-    fs.rmdirSync(screenDirPath);
+  let env = "expo";
+
+  switch (env) {
+    case "expo":
+      screenDirPath = process.cwd() + "/expo-starter/screens";
   }
 
   const ext = "js";
@@ -13,8 +18,11 @@ function createScreenDir(screenJSON) {
     fs.mkdirSync(screenDirPath);
   }
 
+  fs.writeFileSync(process.cwd() + "/test.json", JSON.stringify(screenJSON));
+
   screenJSON.screens.forEach((screen) => {
     const screenFilePath = `${screenDirPath}/${screen.name}`;
+
     if (!fs.existsSync(screenFilePath)) {
       fs.mkdirSync(screenFilePath);
     }
