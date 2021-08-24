@@ -28,6 +28,9 @@ switch(template) {
   case "next":
     templateURL = "git@github.com:Ajamuar/next-starter.git";
     break;
+  case "cra":
+    templateURL = "git@github.com:Ajamuar/cra-starter.git";
+    break;
 }
 
 exec(

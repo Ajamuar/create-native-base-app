@@ -1,12 +1,6 @@
 const fs = require("fs-extra");
 const { createMainFile } = require("./createMainFile");
-
-const toKebabCase = (str) =>
-  str &&
-  str
-    .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-    .map((x) => x.toLowerCase())
-    .join("-");
+const toKebabCase = require("./utils");
 
 function createScreenDir(screenJSON, template = "expo", extension = "js") {
   createMainFile(screenJSON.screens, template, extension);
@@ -21,6 +15,9 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
       break;
     case "crna":
       screenDirPath = process.cwd() + "/native-base-starter/screens";
+      break;
+    case "cra":
+      screenDirPath = process.cwd() + "/native-base-starter/src/screens";
       break;
   }
 
