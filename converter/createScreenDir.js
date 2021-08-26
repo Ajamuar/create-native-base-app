@@ -39,7 +39,29 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
     }
 
     let code = screen.code;
+    let regex = /\/\*.+?\*\//g;
+    const functionalityComment = code.match(regex);
 
+    if (template !== "next") {
+      if (functionalityComment)
+        for (let i = 0; i < functionalityComment.length; i++) {
+          if (functionalityComment[i].includes("onPress function")) {
+            let navigationScreen = functionalityComment[i].substring(
+              functionalityComment[i].indexOf(":") + 1,
+              functionalityComment[i].lastIndexOf('"') + 1
+            );
+            let finalNavigationScreen = navigationScreen.substring(
+              1,
+              navigationScreen.length - 1
+            );
+            const onPressFunction =
+              "onPress={()=>{props.navigation.navigate('" +
+              finalNavigationScreen +
+              "')}}";
+            code = code.replaceAll(functionalityComment[i], onPressFunction);
+          }
+        }
+    }
     if (template === "crna") {
       code = (code + "").replace(
         "@expo/vector-icons",
