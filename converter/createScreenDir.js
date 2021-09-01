@@ -131,33 +131,6 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
       }
     }
 
-    if (template === "cra") {
-      const regex =
-        /^import ?\{([a-zA-Z,\n ])*\} ?from ?\"@expo\/vector-icons\";?$/gm;
-      const icons = code.match(regex);
-      var part = icons[0].substring(
-        icons[0].lastIndexOf("{") + 1,
-        icons[0].lastIndexOf("}")
-      );
-      let iconsName = part.split(",");
-      let finalImports = "";
-
-      for (let i = 0; i < iconsName.length; i++) {
-        iconsName[i] = iconsName[i].replace(/ /g, "");
-        iconsName[i] = iconsName[i].replace(/\n/g, "");
-        if (iconsName[i])
-          finalImports =
-            finalImports +
-            ("import " +
-              iconsName[i] +
-              " from 'react-native-vector-icons/dist/" +
-              iconsName[i] +
-              "';\n");
-      }
-
-      code = code.replaceAll(icons[0], finalImports);
-    }
-
     if (template === "crna") {
       const regex =
         /^import ?\{([a-zA-Z,\n ])*\} ?from ?\"@expo\/vector-icons\";?$/gm;
@@ -172,14 +145,25 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
       for (let i = 0; i < iconsName.length; i++) {
         iconsName[i] = iconsName[i].replace(/ /g, "");
         iconsName[i] = iconsName[i].replace(/\n/g, "");
-        if (iconsName[i])
-          finalImports =
-            finalImports +
-            ("import " +
-              iconsName[i] +
-              " from 'react-native-vector-icons/" +
-              iconsName[i] +
-              "';\n");
+        if (iconsName[i]) {
+          if (template == "crna") {
+            finalImports =
+              finalImports +
+              ("import " +
+                iconsName[i] +
+                " from 'react-native-vector-icons/" +
+                iconsName[i] +
+                "';\n");
+          } else if (template == "cra") {
+            finalImports =
+              finalImports +
+              ("import " +
+                iconsName[i] +
+                " from 'react-native-vector-icons/dist/" +
+                iconsName[i] +
+                "';\n");
+          }
+        }
       }
 
       code = code.replaceAll(icons[0], finalImports);
