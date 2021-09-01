@@ -40,9 +40,9 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
 
     let code = screen.code;
     let regex = /\/\*.+?\*\//g;
-    const functionalityComment = code.match(regex);
 
-    if (template !== "next") {
+    const functionalityComment = code.match(regex);
+    if (template === "expo" || template == "crna") {
       if (functionalityComment)
         for (let i = 0; i < functionalityComment.length; i++) {
           if (functionalityComment[i].includes("onPress function")) {
@@ -61,12 +61,128 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
             code = code.replaceAll(functionalityComment[i], onPressFunction);
           }
         }
+    } else {
+      if (template == "next") {
+        code = "import NextLink from 'next/link'\n" + code;
+        if (functionalityComment) {
+          let closingLinkTag = "</NextLink>";
+          for (let i = 0; i < functionalityComment.length; i++) {
+            if (functionalityComment[i].includes("Closing Link Tag")) {
+              code = code.replaceAll(
+                "{" + functionalityComment[i] + "}",
+                closingLinkTag
+              );
+            } else if (functionalityComment[i].includes("Opening Link Tag")) {
+              let navigationScreen = functionalityComment[i].substring(
+                functionalityComment[i].indexOf(":") + 1,
+                functionalityComment[i].lastIndexOf('"') + 1
+              );
+              let finalNavigationScreen = navigationScreen.substring(
+                1,
+                navigationScreen.length - 1
+              );
+
+              let openingLinkTag =
+                "<NextLink href='/" +
+                toKebabCase(finalNavigationScreen).toLowerCase() +
+                "'>";
+
+              code = code.replaceAll(
+                "{" + functionalityComment[i] + "}",
+                openingLinkTag
+              );
+            }
+          }
+        }
+      } else if (template == "cra") {
+        code =
+          "import { Route, Link as ReactLink, BrowserRouter } from 'react-router-dom'\n" +
+          code;
+        if (functionalityComment) {
+          let closingLinkTag = "</ReactLink>";
+          for (let i = 0; i < functionalityComment.length; i++) {
+            if (functionalityComment[i].includes("Closing Link Tag")) {
+              code = code.replaceAll(
+                "{" + functionalityComment[i] + "}",
+                closingLinkTag
+              );
+            } else if (functionalityComment[i].includes("Opening Link Tag")) {
+              let navigationScreen = functionalityComment[i].substring(
+                functionalityComment[i].indexOf(":") + 1,
+                functionalityComment[i].lastIndexOf('"') + 1
+              );
+              let finalNavigationScreen = navigationScreen.substring(
+                1,
+                navigationScreen.length - 1
+              );
+
+              let openingLinkTag =
+                "<ReactLink to='/" +
+                toKebabCase(finalNavigationScreen).toLowerCase() +
+                "'>";
+
+              code = code.replaceAll(
+                "{" + functionalityComment[i] + "}",
+                openingLinkTag
+              );
+            }
+          }
+        }
+      }
     }
-    if (template === "crna") {
-      code = (code + "").replace(
-        "@expo/vector-icons",
-        "react-native-vector-icons"
+
+    if (template === "cra") {
+      const regex =
+        /^import ?\{([a-zA-Z,\n ])*\} ?from ?\"@expo\/vector-icons\";?$/gm;
+      const icons = code.match(regex);
+      var part = icons[0].substring(
+        icons[0].lastIndexOf("{") + 1,
+        icons[0].lastIndexOf("}")
       );
+      let iconsName = part.split(",");
+      let finalImports = "";
+
+      for (let i = 0; i < iconsName.length; i++) {
+        iconsName[i] = iconsName[i].replace(/ /g, "");
+        iconsName[i] = iconsName[i].replace(/\n/g, "");
+        if (iconsName[i])
+          finalImports =
+            finalImports +
+            ("import " +
+              iconsName[i] +
+              " from 'react-native-vector-icons/dist/" +
+              iconsName[i] +
+              "';\n");
+      }
+
+      code = code.replaceAll(icons[0], finalImports);
+    }
+
+    if (template === "crna") {
+      const regex =
+        /^import ?\{([a-zA-Z,\n ])*\} ?from ?\"@expo\/vector-icons\";?$/gm;
+      const icons = code.match(regex);
+      var part = icons[0].substring(
+        icons[0].lastIndexOf("{") + 1,
+        icons[0].lastIndexOf("}")
+      );
+      let iconsName = part.split(",");
+      let finalImports = "";
+
+      for (let i = 0; i < iconsName.length; i++) {
+        iconsName[i] = iconsName[i].replace(/ /g, "");
+        iconsName[i] = iconsName[i].replace(/\n/g, "");
+        if (iconsName[i])
+          finalImports =
+            finalImports +
+            ("import " +
+              iconsName[i] +
+              " from 'react-native-vector-icons/" +
+              iconsName[i] +
+              "';\n");
+      }
+
+      code = code.replaceAll(icons[0], finalImports);
     }
 
     fs.writeFileSync(screenFilePath + `/index.${extension}x`, code);
