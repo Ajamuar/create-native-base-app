@@ -131,7 +131,7 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
       }
     }
 
-    if (template === "crna") {
+    if (template === "crna" || template == "cra") {
       const regex =
         /^import ?\{([a-zA-Z,\n ])*\} ?from ?\"@expo\/vector-icons\";?$/gm;
       const icons = code.match(regex);
