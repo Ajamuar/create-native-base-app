@@ -32,13 +32,7 @@ switch(template) {
     templateURL = "git@github.com:Ajamuar/cra-starter.git";
     break;
 }
-// const {
-//   getStoryBookScreensCode,
-//   writeCodeToFiles,
-// } = require("./converter");
 
-// getStoryBookScreensCode();
-// writeCodeToFiles();
 exec(
   `git clone ${templateURL} native-base-starter`,
   (error, stdout, stderr) => {
