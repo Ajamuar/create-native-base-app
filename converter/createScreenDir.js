@@ -45,9 +45,7 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
     } else {
       finalCode = screen.code;
     }
-    // console.log(finalCode);
     let code = finalCode;
-    // let code = finalCode;
     let regex = /\/\*.+?\*\//g;
 
     const functionalityComment = code.match(regex);
