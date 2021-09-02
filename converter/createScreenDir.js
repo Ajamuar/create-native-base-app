@@ -37,8 +37,17 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
     if (!fs.existsSync(screenFilePath)) {
       fs.mkdirSync(screenFilePath);
     }
-
-    let code = screen.code;
+    let finalCode;
+    if (extension == "js") {
+      finalCode = require("@babel/core").transformSync(screen.code, {
+        plugins: [["@babel/plugin-transform-typescript", { isTSX: true }]],
+      }).code;
+    } else {
+      finalCode = screen.code;
+    }
+    // console.log(finalCode);
+    let code = finalCode;
+    // let code = finalCode;
     let regex = /\/\*.+?\*\//g;
 
     const functionalityComment = code.match(regex);
@@ -58,7 +67,7 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
               "onPress={()=>{props.navigation.navigate('" +
               finalNavigationScreen +
               "')}}";
-            code = code.replaceAll(functionalityComment[i], onPressFunction);
+            code = code.replace(functionalityComment[i], onPressFunction);
           }
         }
     } else {
@@ -68,10 +77,20 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
           let closingLinkTag = "</NextLink>";
           for (let i = 0; i < functionalityComment.length; i++) {
             if (functionalityComment[i].includes("Closing Link Tag")) {
-              code = code.replaceAll(
-                "{" + functionalityComment[i] + "}",
-                closingLinkTag
-              );
+              if (extension == "js") {
+                let test = /\{[\t\n ]*\/\*(.*)*\/[\t\n ]*\}/g;
+                let match = code.match(test);
+                for (let i = 0; i < match.length; i++) {
+                  if (match[i].includes("Closing Link Tag")) {
+                    code = code.replaceAll(match[i], closingLinkTag);
+                  }
+                }
+              } else {
+                code = code.replaceAll(
+                  "{" + functionalityComment[i] + "}",
+                  closingLinkTag
+                );
+              }
             } else if (functionalityComment[i].includes("Opening Link Tag")) {
               let navigationScreen = functionalityComment[i].substring(
                 functionalityComment[i].indexOf(":") + 1,
@@ -86,11 +105,20 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
                 "<NextLink href='/" +
                 toKebabCase(finalNavigationScreen).toLowerCase() +
                 "'>";
-
-              code = code.replaceAll(
-                "{" + functionalityComment[i] + "}",
-                openingLinkTag
-              );
+              if (extension == "js") {
+                let test = /\{[\t\n ]*\/\*(.*)*\/[\t\n ]*\}/g;
+                let match = code.match(test);
+                for (let i = 0; i < match.length; i++) {
+                  if (match[i].includes("Opening Link Tag")) {
+                    code = code.replaceAll(match[i], openingLinkTag);
+                  }
+                }
+              } else {
+                code = code.replaceAll(
+                  "{" + functionalityComment[i] + "}",
+                  openingLinkTag
+                );
+              }
             }
           }
         }
@@ -102,10 +130,19 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
           let closingLinkTag = "</ReactLink>";
           for (let i = 0; i < functionalityComment.length; i++) {
             if (functionalityComment[i].includes("Closing Link Tag")) {
-              code = code.replaceAll(
-                "{" + functionalityComment[i] + "}",
-                closingLinkTag
-              );
+              if (extension == "js") {
+                let test = /\{[\t\n ]*\/\*(.*)*\/[\t\n ]*\}/g;
+                let match = code.match(test);
+                for (let i = 0; i < match.length; i++) {
+                  if (match[i].includes("Closing Link Tag")) {
+                    code = code.replaceAll(match[i], closingLinkTag);
+                  }
+                }
+              } else
+                code = code.replaceAll(
+                  "{" + functionalityComment[i] + "}",
+                  closingLinkTag
+                );
             } else if (functionalityComment[i].includes("Opening Link Tag")) {
               let navigationScreen = functionalityComment[i].substring(
                 functionalityComment[i].indexOf(":") + 1,
@@ -120,11 +157,20 @@ function createScreenDir(screenJSON, template = "expo", extension = "js") {
                 "<ReactLink to='/" +
                 toKebabCase(finalNavigationScreen).toLowerCase() +
                 "'>";
-
-              code = code.replaceAll(
-                "{" + functionalityComment[i] + "}",
-                openingLinkTag
-              );
+              if (extension == "js") {
+                let test = /\{[\t\n ]*\/\*(.*)*\/[\t\n ]*\}/g;
+                let match = code.match(test);
+                for (let i = 0; i < match.length; i++) {
+                  if (match[i].includes("Opening Link Tag")) {
+                    code = code.replaceAll(match[i], openingLinkTag);
+                  }
+                }
+              } else {
+                code = code.replaceAll(
+                  "{" + functionalityComment[i] + "}",
+                  openingLinkTag
+                );
+              }
             }
           }
         }
