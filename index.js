@@ -56,7 +56,6 @@ exec(
 
         let screenJSON = fs.readFileSync(__dirname + "/screens.json", "utf8");
         screenJSON = JSON.parse(screenJSON)
-
         createScreenDir(screenJSON, template, extension);
       }
     );
