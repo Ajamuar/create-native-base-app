@@ -1,7 +1,12 @@
 const fs = require("fs-extra");
 const toKebabCase = require("./utils");
 
-const updateDrawerScreenTemplate = (screens = [], mainFileTemplate, ext) => {
+const updateDrawerScreenTemplate = (
+  screens = [],
+  mainFileTemplate,
+  ext,
+  template
+) => {
   let importScreenString = "";
   let componentDeclarationString = "";
 
@@ -19,10 +24,17 @@ const updateDrawerScreenTemplate = (screens = [], mainFileTemplate, ext) => {
     componentDeclarationString
   );
 
-  fs.writeFileSync(
-    process.cwd() + "/native-base-starter/App." + ext + "x",
-    mainFileTemplate
-  );
+  if (template == "crna") {
+    fs.writeFileSync(
+      process.cwd() + "/native-base-starter/App." + ext,
+      mainFileTemplate
+    );
+  } else {
+    fs.writeFileSync(
+      process.cwd() + "/native-base-starter/App." + ext + "x",
+      mainFileTemplate
+    );
+  }
 };
 
 const updateCRATemplate = (screens = [], mainFileTemplate, ext) => {
@@ -50,6 +62,18 @@ const updateCRATemplate = (screens = [], mainFileTemplate, ext) => {
     process.cwd() + "/native-base-starter/src/App." + ext + "x",
     mainFileTemplate
   );
+  if (ext == "js") {
+    fs.unlink(
+      process.cwd() + "/native-base-starter/src/App.tsx",
+      function (err) {
+        if (err) {
+          throw err;
+        } else {
+          console.log("Successfully deleted the file.");
+        }
+      }
+    );
+  }
 };
 
 const createExpoMainFile = (screens, ext) => {
@@ -77,7 +101,7 @@ export default function App() {
 }
 `;
 
-  updateDrawerScreenTemplate(screens, expoMainFileTemplate, ext);
+  updateDrawerScreenTemplate(screens, expoMainFileTemplate, ext, "expo");
 };
 
 const createCrnaMainFile = (screens, ext) => {
@@ -106,7 +130,17 @@ export default function App() {
 }
   `;
 
-  updateDrawerScreenTemplate(screens, crnaMainFileTemplate, ext);
+  updateDrawerScreenTemplate(screens, crnaMainFileTemplate, ext, "crna");
+
+  if (ext == "js") {
+    fs.unlink(process.cwd() + "/native-base-starter/App.tsx", function (err) {
+      if (err) {
+        throw err;
+      } else {
+        console.log("Successfully deleted the file.");
+      }
+    });
+  }
 };
 
 const createCraMainFile = (screens, ext) => {
