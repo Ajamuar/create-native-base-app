@@ -24,17 +24,13 @@ const updateDrawerScreenTemplate = (
     componentDeclarationString
   );
 
-  if (template == "crna") {
-    fs.writeFileSync(
-      process.cwd() + "/native-base-starter/App." + ext,
-      mainFileTemplate
-    );
-  } else {
-    fs.writeFileSync(
-      process.cwd() + "/native-base-starter/App." + ext + "x",
-      mainFileTemplate
-    );
-  }
+  fs.writeFileSync(
+    process.cwd() +
+      "/native-base-starter/App." +
+      ext +
+      (template === "crna" ? "" : "x"),
+    mainFileTemplate
+  );
 };
 
 const updateCRATemplate = (screens = [], mainFileTemplate, ext) => {
